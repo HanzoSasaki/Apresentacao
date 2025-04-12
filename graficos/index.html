@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Financeiro Completo</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+
+  </style>
+</head>
+
+<body>
+  <nav class="nav-container">
+    <div class="nav-links">
+      <a href="#comparativos" class="nav-link">Comparativos</a>
+      <a href="#margens" class="nav-link">Margens</a>
+      <a href="#desempenho" class="nav-link">Desempenho</a>
+    </div>
+  </nav>
+
+  <div class="dashboard-container">
+    <!-- Seção de Comparativos -->
+    <section class="chart-section" id="comparativos">
+      <div class="section-header">
+        <h2 class="section-title">Comparativo entre Meses</h2>
+      </div>
+      <div class="iframe-container">
+        <iframe class="responsive-iframe"
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=578964487&amp;format=interactive"
+          loading="lazy"></iframe>
+      </div>
+      <div class="section-controls">
+        <button class="control-btn" onclick="openModal(this)">
+          <i class="fas fa-expand"></i> Expandir
+        </button>
+      </div>
+    </section>
+
+    <!-- Seção de Margens -->
+    <section class="chart-section" id="margens">
+      <div class="section-header">
+        <h2 class="section-title">Margens e Percentuais</h2>
+      </div>
+      <div class="iframe-container">
+        <iframe class="responsive-iframe"
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=578964487&amp;format=interactive"
+          loading="lazy"></iframe>
+      </div>
+      <div class="section-controls">
+        <button class="control-btn" onclick="openModal(this)">
+          <i class="fas fa-expand"></i> Expandir
+        </button>
+      </div>
+    </section>
+
+    <!-- Seção de Totais -->
+    <section class="chart-section">
+      <div class="section-header">
+        <h2 class="section-title">Totais em Margem</h2>
+      </div>
+      <div class="iframe-container">
+        <iframe class="responsive-iframe"
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=469572905&amp;format=interactive"
+          loading="lazy"></iframe>
+      </div>
+      <div class="section-controls">
+        <button class="control-btn" onclick="openModal(this)">
+          <i class="fas fa-expand"></i> Expandir
+        </button>
+      </div>
+    </section>
+
+    <!-- Seção de Percentuais -->
+    <section class="chart-section">
+      <div class="section-header">
+        <h2 class="section-title">Margem Percentual</h2>
+      </div>
+      <div class="iframe-container">
+        <iframe class="responsive-iframe"
+          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=1090352349&amp;format=interactive"
+          loading="lazy"></iframe>
+      </div>
+      <div class="section-controls">
+        <button class="control-btn" onclick="openModal(this)">
+          <i class="fas fa-expand"></i> Expandir
+        </button>
+      </div>
+    </section>
+
+    
+    </section>
+
+
+
+  </div>
+
+  <!-- Modal -->
+  <div class="modal" id="chartModal">
+    <div class="modal-content">
+      <span class="close-modal" onclick="closeModal()">×</span>
+      <iframe id="modalIframe" class="responsive-iframe"></iframe>
+    </div>
+  </div>
+
+  <script src="script.js">  </script>
+
+
+</body>
+
+</html>
