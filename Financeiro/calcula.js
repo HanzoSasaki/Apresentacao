@@ -39,18 +39,6 @@ function abrirCalculadora(tipo) {
     </div>
   </div>
 
-  <div class="input-grid">
-    <div class="form-group">
-      <label for="decimo">Décimo Terceiro (%)</label>
-      <input type="number" id="decimo" class="form-control" placeholder="valor em (%)">
-    </div>
-
-    <div class="form-group">
-      <label for="antecipa">Antecipação (%)</label>
-      <input type="number" id="antecipa" class="form-control" placeholder="valor em (%)">
-    </div>
-  </div>
-
   <div class="form-group">
     <label for="margem">Margem de Lucro Desejada (%)</label>
     <input type="number" id="margem" class="form-control" placeholder="Porcentagem recomendada de pelo menos 15%">
