@@ -39,7 +39,7 @@ function abrirCalculadora(tipo) {
     </div>
   </div>
 
-  <div class="form-group">
+   <div class="form-group">
     <label for="margem">Margem de Lucro Desejada (%)</label>
     <input type="number" id="margem" class="form-control" placeholder="Porcentagem recomendada de pelo menos 15%">
   </div>
@@ -115,43 +115,37 @@ function fecharModal() {
 // Função principal de cálculo (CORRIGIDA)
 function calcularPreco() {
   // Obter valores dos inputs
-  const custo = parseFloat(document.getElementById("custo").value) || NaN;
-  const imposto = (parseFloat(document.getElementById("imposto").value) || NaN) / 100;
-  const comissao = (parseFloat(document.getElementById("comissao").value) || NaN) / 100;
-  const taxa = parseFloat(document.getElementById("taxa").value) || NaN;
-  const margem = (parseFloat(document.getElementById("margem").value) || NaN) / 100;
-  
-  const valorOperacional = (parseFloat(document.getElementById("valorOperacional").value) || 0) / 100;
-  const decimo = (parseFloat(document.getElementById("decimo").value) || 0) / 100;
-  const antecipa = (parseFloat(document.getElementById("antecipa").value) || 0) / 100;
+  const custo = parseFloat(document.getElementById("custo").value);
+  const imposto = parseFloat(document.getElementById("imposto").value) / 100 || 0.0108; // Padrão 1,08%
+  const comissao = parseFloat(document.getElementById("comissao").value) / 100 || 0.20; // Padrão 20%
+  const taxa = parseFloat(document.getElementById("taxa").value) || 4.00; // Padrão R$4,00
+  const valorOperacional = parseFloat(document.getElementById("valorOperacional").value) / 100 || 0;
+  const margem = parseFloat(document.getElementById("margem").value) / 100;
 
   // Validar campos obrigatórios
-  if ([custo, imposto, comissao, taxa, margem].some(isNaN)) {
-      alert("Preencha todos os campos obrigatórios!");
-      return;
+  if (isNaN(custo) || isNaN(margem)) {
+    alert("Preencha todos os campos obrigatórios: custo e margem de lucro.");
+    return;
   }
 
   // Calcular total de percentuais
-  const totalPercentuais = imposto + comissao + margem + valorOperacional + decimo + antecipa;
+  const totalPercentuais = imposto + comissao + valorOperacional + margem;
 
-  // Validar soma de percentuais
   if (totalPercentuais >= 1) {
-      alert("Erro! A soma dos percentuais não pode ser 100% ou mais");
-      return;
+    alert("Erro! A soma dos percentuais não pode ser 100% ou mais.");
+    return;
   }
 
-  // Calcular preço de venda CORRETO
+  // Calcular preço de venda
   const precoVenda = (custo + taxa) / (1 - totalPercentuais);
 
-  // Calcular custo total para verificação
-  const custoTotal = custo + taxa + 
-    (precoVenda * (imposto + comissao + valorOperacional + decimo + antecipa));
+  // Calcular custo total
+  const custoTotal = custo + taxa + (precoVenda * (imposto + comissao + valorOperacional));
 
-  // Calcular resultados
   const lucro = precoVenda - custoTotal;
   const margemLucro = (lucro / precoVenda) * 100;
 
-  // Exibir resultados
+  // Exibir resultado principal
   const resultadoHTML = `
     <div class="result-item">
       <span class="result-label">Preço de Venda:</span>
@@ -168,7 +162,7 @@ function calcularPreco() {
   `;
   document.getElementById("resultado").innerHTML = resultadoHTML;
 
-  // Calcular promoções
+  // Tabela de promoções possíveis
   let promocoesHTML = `
     <h3>Promoções Possíveis</h3>
     <table class="promo-table">
@@ -183,26 +177,26 @@ function calcularPreco() {
       <tbody>`;
 
   for (let desconto = 5; desconto <= 50; desconto += 5) {
-      const precoPromo = precoVenda * (1 - desconto/100);
-      const custoPromo = custo + taxa + 
-        (precoPromo * (imposto + comissao + valorOperacional + decimo + antecipa));
-      const lucroPromo = precoPromo - custoPromo;
-      const margemPromo = (lucroPromo / precoPromo) * 100;
+    const precoPromo = precoVenda * (1 - desconto / 100);
+    const custoPromo = custo + taxa + (precoPromo * (imposto + comissao + valorOperacional));
+    const lucroPromo = precoPromo - custoPromo;
+    const margemPromo = (lucroPromo / precoPromo) * 100;
 
-      if (lucroPromo > 0 && margemPromo > 0) { // Apenas se ambos forem positivos
-        promocoesHTML += `
-          <tr>
-            <td>${desconto}%</td>
-            <td>R$ ${precoPromo.toFixed(2)}</td>
-            <td class="green">R$ ${lucroPromo.toFixed(2)}</td>
-            <td class="green">${margemPromo.toFixed(2)}%</td>
-          </tr>`;
-      }
+    if (lucroPromo > 0 && margemPromo > 0) {
+      promocoesHTML += `
+        <tr>
+          <td>${desconto}%</td>
+          <td>R$ ${precoPromo.toFixed(2)}</td>
+          <td class="green">R$ ${lucroPromo.toFixed(2)}</td>
+          <td class="green">${margemPromo.toFixed(2)}%</td>
+        </tr>`;
+    }
   }
 
   promocoesHTML += `</tbody></table>`;
   document.getElementById("promocoes").innerHTML = promocoesHTML;
 }
+
 
 function calcularValorFinal() {
   const custo = parseFloat(document.getElementById("custo").value);
