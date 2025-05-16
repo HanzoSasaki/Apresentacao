@@ -1,196 +1,96 @@
-// ==== [1. FUNÇÕES GLOBAIS] ==== //
-// Função de formatação monetária segura
-function formatCurrency(value) {
-    try {
-        return Number(value || 0).toLocaleString('pt-BR', {
-            style: 'currency',
-            currency: 'BRL',
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-        });
-    } catch (error) {
-        console.error('Erro na formatação:', error);
-        return 'R$ 0,00';
-    }
-}
+// script.js
 
-// ==== [2. CONTROLE DE ESTADO] ==== //
-let funcionarios = JSON.parse(localStorage.getItem("funcionarios")) || [];
-let funcionarioEditando = null;
-
-// Inicialização segura dos dados
-function inicializarDados() {
-    funcionarios = funcionarios.map(func => ({
-        nome: func.nome || 'Não informado',
-        salarioBase: Number(func.salarioBase) || 0,
-        bonificacao: Number(func.bonificacao) || 0,
-        faltas: Array.isArray(func.faltas) ? func.faltas : [],
-        horasExtras: Array.isArray(func.horasExtras) ? func.horasExtras : []
-    }));
-    localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
-}
-
-// ==== [3. CONTROLE DE INTERFACE] ==== //
 document.addEventListener('DOMContentLoaded', () => {
-    // Garante inicialização mesmo em iframes
-    if (window.self === window.top) { // Somente na janela principal
-        inicializarDados();
-        setupMenu();
-        setupSenha();
-        setupModais();
-    } else { // Código específico para iframes
-        window.parent.postMessage({ type: 'iframeLoaded' }, '*');
-    }
-});
-function setupMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    const toggleButton = document.querySelector('.menu-toggle');
-
-    if (toggleButton) {
-        toggleButton.addEventListener('click', () => {
-            sidebar.classList.toggle('open');
-        });
-    } else {
-        console.warn('Botão .menu-toggle não encontrado no DOM.');
-    }
-
-    // Controle de itens do menu
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetUrl = this.href;
-
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
-            this.classList.add('active');
-
-            document.getElementById('contentFrame').src = targetUrl;
-            sidebar.classList.remove('open');
-        });
-    });
-
-    // Sincronização com iframe
-    window.addEventListener('message', (e) => {
-        if (e.data.type === 'updateMenu') {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.toggle('active', item.href === e.data.url);
-            });
-        }
-    });
-}
-
-// ==== [4. CONTROLE DE MENU/IFRAME] ==== //
-function setupMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    
-    // Controle do menu hamburguer
-    document.querySelector('.menu-toggle').addEventListener('click', toggleMenu);
-    
+    // referências
+    const sidebar     = document.querySelector('.sidebar');
+    const btnToggle   = document.querySelector('.menu-toggle');
+    const overlay     = document.getElementById('pageOverlay');
+    const navItems    = document.querySelectorAll('.nav-item');
+    const passwordModal = document.getElementById('password-modal');
+    const usersModal    = document.getElementById('users-modal');
+    const senhaInput  = document.getElementById('password-input');
+    const errorMsg    = document.getElementById('error-message');
+    const contentFrame = document.getElementById('contentFrame');
+  
+    // --- MENU OFF-CANVAS ---
     function toggleMenu() {
-        sidebar.classList.toggle('open');
+      sidebar.classList.toggle('open');
+      btnToggle.classList.toggle('open');
+      overlay.classList.toggle('visible');
     }
-
-    // Controle de itens do menu
-    document.querySelectorAll('.nav-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            e.preventDefault();
-            const targetUrl = this.href;
-            
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
-            this.classList.add('active');
-            
-            document.getElementById('contentFrame').src = targetUrl;
-            sidebar.classList.remove('open');
-        });
+  
+    btnToggle.addEventListener('click', toggleMenu);
+    overlay.addEventListener('click', toggleMenu);
+  
+    // fecha menu ao clicar em qualquer item
+    navItems.forEach(item => {
+      item.addEventListener('click', () => {
+        sidebar.classList.remove('open');
+        btnToggle.classList.remove('open');
+        overlay.classList.remove('visible');
+      });
     });
-
-    // Sincronização com iframe
-    window.addEventListener('message', (e) => {
-        if (e.data.type === 'updateMenu') {
-            document.querySelectorAll('.nav-item').forEach(item => {
-                item.classList.toggle('active', item.href === e.data.url);
-            });
-        }
+  
+    // --- MODAL DE SENHA ---
+    const senhaCorreta   = "0000";
+    const tempoBloqueio  = 2 * 60 * 60 * 1000; // 2h
+  
+    // verifica bloqueio
+    let ultimaVerificacao = localStorage.getItem("ultimaVerificacao");
+    if (ultimaVerificacao && (Date.now() - ultimaVerificacao < tempoBloqueio)) {
+      passwordModal.style.display = "none";
+    } else {
+      passwordModal.style.display = "flex";
+    }
+  
+    // enter pra submeter
+    senhaInput.addEventListener("keyup", e => {
+      if (e.key === "Enter") verificarSenha();
     });
-}
-
-// ==== [5. CONTROLE DE SEGURANÇA] ==== //
-// function setupSenha() {
-//     const senhaCorreta = "246851";
-//     const tempoBloqueio = 2 * 60 * 60 * 1000;
-//     const passwordModal = document.getElementById("password-modal");
-
-//     // Verificação inicial
-//     let ultimaVerificacao = localStorage.getItem("ultimaVerificacao");
-//     if (ultimaVerificacao && (Date.now() - ultimaVerificacao < tempoBloqueio)) {
-//         passwordModal.style.display = "none";
-//     } else {
-//         passwordModal.style.display = "flex";
-//     }
-
-//     // Event listeners
-//     document.getElementById("password-input").addEventListener("keyup", function(e) {
-//         if (e.key === "Enter") verificarSenha();
-//     });
-
-//     function verificarSenha() {
-//         const senha = document.getElementById("password-input").value;
-//         const errorMsg = document.getElementById("error-message");
-        
-//         if (senha === senhaCorreta) {
-//             localStorage.setItem("ultimaVerificacao", Date.now());
-//             passwordModal.style.display = "none";
-//         } else {
-//             errorMsg.textContent = "Senha incorreta! Tente novamente.";
-//         }
-//     }
-// }
-
-// ==== [6. CONTROLE DE MODAIS] ==== //
-function setupModais() {
-    // Modal Previsão
-    document.getElementById("previsao-link").addEventListener("click", function(e) {
+  
+    window.verificarSenha = function() {
+      if (senhaInput.value === senhaCorreta) {
+        localStorage.setItem("ultimaVerificacao", Date.now());
+        passwordModal.style.display = "none";
+      } else {
+        errorMsg.textContent = "Senha incorreta! Tente novamente.";
+      }
+    };
+  
+    // --- MODAL USUÁRIOS PERMITIDOS ---
+    window.abrirModalUsers = () => usersModal.style.display = "flex";
+    window.fecharModalUsers = () => usersModal.style.display = "none";
+  
+    // --- IFRAME & MENU ATIVO ---
+    function setActiveMenuItem(url) {
+      navItems.forEach(item => {
+        const itemPath   = new URL(item.href, location.href).pathname;
+        const targetPath = new URL(url, location.href).pathname;
+        item.classList.toggle('active', itemPath === targetPath);
+      });
+    }
+  
+    navItems.forEach(item => {
+      item.addEventListener('click', e => {
         e.preventDefault();
-        document.getElementById("popup-overlay").style.display = "block";
+        const url = item.href;
+        contentFrame.src = url;
+        setActiveMenuItem(url);
+      });
     });
-
-    document.getElementById("close-popup").addEventListener("click", function() {
-        document.getElementById("popup-overlay").style.display = "none";
+  
+    // carrega a primeira página
+    const firstUrl = navItems[0]?.href;
+    if (firstUrl) {
+      contentFrame.src = firstUrl;
+      setActiveMenuItem(firstUrl);
+    }
+  
+    // atualiza ativo ao trocar iframe
+    contentFrame.addEventListener('load', () => {
+      try {
+        setActiveMenuItem(contentFrame.contentWindow.location.href);
+      } catch { /* cross-origin */ }
     });
-
-    // Outros modais
-    window.abrirModalUsers = function() {
-        document.getElementById("users-modal").style.display = "flex";
-    }
-
-    window.fecharModalUsers = function() {
-        document.getElementById("users-modal").style.display = "none";
-    }
-}
-
-// ==== [7. FUNÇÕES COMPARTILHADAS] ==== //
-// Disponibiliza funções globais para iframes
-window.formatCurrency = formatCurrency;
-window.funcionarios = funcionarios;
-window.atualizarDados = function() {
-    localStorage.setItem('funcionarios', JSON.stringify(funcionarios));
-    window.parent.postMessage({ type: 'dataUpdated' }, '*');
-};
-
-// ==== [8. COMUNICAÇÃO ENTRE FRAMES] ==== //
-// Atualiza o menu quando um iframe é carregado
-window.addEventListener('message', (e) => {
-    if (e.data.type === 'iframeLoaded') {
-        const iframes = document.querySelectorAll('iframe');
-        iframes.forEach(iframe => {
-            if (iframe.contentWindow === e.source) {
-                const parentItem = [...document.querySelectorAll('.nav-item')]
-                    .find(item => item.href === iframe.src);
-                if (parentItem) parentItem.classList.add('active');
-            }
-        });
-    }
-});
+  });
+  

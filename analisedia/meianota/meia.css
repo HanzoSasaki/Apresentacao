@@ -150,6 +150,11 @@ body {
     transform: translateY(-2px);
 }
 
+/* Garantir que cores prevaleçam */
+td[style*="color:red"], td[style*="color:green"] {
+    color: inherit !important;
+}
+
 /* Mensagens */
 .erro {
     background: #fee;

@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 async function carregarDados() {
     try {
         const dadosVendas = await carregarPlanilha(
-            'https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pub?output=tsv'
+            'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2wJ-dp1WR6wJyvo_vN8CF_aK-sMsVEFEjupyPYBMfDLM5y2GF0HGIKD2vxzQRiiR9zhcelfl74XPJ/pub?output=tsv'
         );
         
         todosDados = processarVendas(dadosVendas);
@@ -159,6 +159,8 @@ function exibirResultados(dados) {
   const tbody = document.getElementById('table-body');
   tbody.innerHTML = '';
 
+
+  
   dados.forEach(item => {
       const row = document.createElement('tr');
       row.innerHTML = `
@@ -174,8 +176,8 @@ function exibirResultados(dados) {
           </td>
           <td>${(item.margemLiquida / item.preco * 100 || 0).toLocaleString('pt-BR', { maximumFractionDigits: 2 })}%</td>
           <td>${item.data.toLocaleDateString('pt-BR')}</td>
-          <td style="color: ${item.avaliacao === 'Alterar' ? 'red' : 'green'}">
-              ${item.avaliacao}
+          <td style="color: ${item.avaliacao === 'Alterar' ? 'red' : 'black'}">
+          <span>${item.avaliacao}</span>
           </td>
 
       `;

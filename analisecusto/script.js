@@ -9,7 +9,7 @@ const dados = {
     custos: new Array(12).fill(null)
 };
 
-const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pub?gid=907090014&single=true&output=tsv";
+const TSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ2wJ-dp1WR6wJyvo_vN8CF_aK-sMsVEFEjupyPYBMfDLM5y2GF0HGIKD2vxzQRiiR9zhcelfl74XPJ/pub?gid=1283668224&single=true&output=tsv";
 
 async function carregarDados() {
     try {
@@ -88,7 +88,7 @@ function formatarMoeda(valor) {
 function calcularProjecaoMesAtual() {
     const hoje = new Date();
     const mesAtual = hoje.getMonth(); // 0 = Janeiro
-    const diaAtual = hoje.getDate(); // Dia de hoje
+    const diaAtual = hoje.getDate();   // Dia de hoje
     const diasNoMesAtual = dados.diasNoMes[mesAtual];
 
     const lucroBruto = dados.lucroBruto[mesAtual];
@@ -106,7 +106,7 @@ function calcularProjecaoMesAtual() {
         localStorage.setItem("projecao", 0);
     }
 
-    // Média diária
+    // Calcular médias diárias
     const mediaLucroBruto = lucroBruto / diaAtual;
     const mediaLucroLiquido = lucroLiquido / diaAtual;
 
@@ -114,7 +114,7 @@ function calcularProjecaoMesAtual() {
     const projecaoLucroBruto = mediaLucroBruto * diasNoMesAtual;
     const projecaoLucroLiquido = mediaLucroLiquido * diasNoMesAtual;
 
-    // Atualiza o conteúdo do card
+    // Atualiza o conteúdo do card com as projeções
     const projecaoEl = document.getElementById('projecao-mensal');
     if (projecaoEl) {
         const titulo = projecaoEl.querySelector('h2');
@@ -125,12 +125,59 @@ function calcularProjecaoMesAtual() {
         const box = projecaoEl.querySelector('.projecao-box');
         if (box) {
             box.innerHTML = `
-                 Média diária: ${formatarMoeda(mediaLucroLiquido)}<br>
-                 Projeção até dia ${diasNoMesAtual}: ${formatarMoeda(projecaoLucroLiquido)}
+           
+                <strong>Média Diária:</strong><br>
+                Líquida: ${formatarMoeda(mediaLucroLiquido)}<br>
+                Bruta: ${formatarMoeda(mediaLucroBruto)}<br><br>
+                <strong>Projeção até dia ${diasNoMesAtual}:</strong><br>
+                Líquida: ${formatarMoeda(projecaoLucroLiquido)}<br>
+                Bruta: ${formatarMoeda(projecaoLucroBruto)}
             `;
         }
     }
 }
+
+function mostrarLoader() {
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'flex';
+}
+
+function esconderLoader() {
+    const loader = document.getElementById('loader');
+    if (loader) loader.style.display = 'none';
+}
+async function carregarDados() {
+    mostrarLoader();
+    try {
+        const response = await fetch(TSV_URL);
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+        const tsv = await response.text();
+        processarTSV(tsv);
+        calcularProjecaoMesAtual();
+        renderizarMeses();
+        calcularTotais();
+        renderizarGraficos();
+    } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        alert('Erro ao carregar dados. Verifique o console para detalhes.');
+    } finally {
+        esconderLoader();
+    }
+}
+function aplicarEfeitoSnake(texto) {
+    const container = document.getElementById('snake-text');
+    container.innerHTML = ''; // Limpa o conteúdo atual
+
+    texto.split('').forEach((letra, i) => {
+        const span = document.createElement('span');
+        span.textContent = letra;
+        span.style.animationDelay = `${i * 0.1}s`;
+        container.appendChild(span);
+    });
+}
+
+// Inicia com o texto "Carregando..."
+aplicarEfeitoSnake('...');
 
 const hoje = new Date();
 const mesAtual = hoje.getMonth();
@@ -173,22 +220,32 @@ function renderizarMeses() {
     container.innerHTML = '';
 
     dados.meses.forEach((mes, index) => {
-        if (dados.lucroBruto[index] === null && dados.lucroLiquido[index] === null) return;
+        const lucroBruto = dados.lucroBruto[index];
+        const custos = dados.custos[index];
+        const lucroLiquido = dados.lucroLiquido[index];
+
+        if (lucroBruto === null && lucroLiquido === null) return;
+
+        // 👉 Cálculo da Margem Limpa
+        const margemLimpa = (lucroBruto !== null && custos !== null)
+            ? lucroBruto - custos
+            : null;
 
         const mesDiv = document.createElement('div');
         mesDiv.className = 'mes-card';
         mesDiv.innerHTML = `
             <h3>${mes}</h3>
             <div class="detalhes-mes">
-                <p>💰 Lucro Bruto: ${formatarMoeda(dados.lucroBruto[index])}</p>
-                <p>💵 Lucro Líquido: ${formatarMoeda(dados.lucroLiquido[index])}</p>
-                <p>📉 Custos: ${formatarMoeda(dados.custos[index])}</p>
+                <p>💰 Lucro Bruto: ${formatarMoeda(lucroBruto)}</p>
+                <p>💵 Lucro Líquido: ${formatarMoeda(lucroLiquido)}</p>
+                <p>📉 Custos: ${formatarMoeda(custos)}</p>
+                <p>📊 Margem Limpa: ${formatarMoeda(margemLimpa)}</p>
                 <br>
                 <div class="variacoes">
                     <h3>Comparação com o mês anterior:</h3>
-                    <p>📈 Variação margem: ${calcularVariacao(dados.lucroLiquido[index], dados.lucroLiquido[index - 1])}</p>
+                    <p>📈 Variação margem: ${calcularVariacao(lucroLiquido, dados.lucroLiquido[index - 1])}</p>
                     <p>📅 Variação Custos: ${calcularVariacaoAjustada(
-                        dados.custos[index],
+                        custos,
                         dados.custos[index - 1],
                         dados.diasNoMes[index],
                         dados.diasNoMes[index - 1]
@@ -199,6 +256,7 @@ function renderizarMeses() {
         container.appendChild(mesDiv);
     });
 }
+
 
 function calcularTotais() {
     const total = (arr) => arr.reduce((acc, val) => (val !== null ? acc + val : acc), 0);

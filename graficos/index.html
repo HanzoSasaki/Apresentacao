@@ -1,113 +1,122 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Financeiro Completo</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard Financeiro Diário</title>
 
-  </style>
+  <!-- Estilos e bibliotecas -->
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script defer src="script.js"></script>
 </head>
-
 <body>
-  <nav class="nav-container">
-    <div class="nav-links">
-      <a href="#comparativos" class="nav-link">Comparativos</a>
-      <a href="#margens" class="nav-link">Margens</a>
-      <a href="#desempenho" class="nav-link">Desempenho</a>
-    </div>
-  </nav>
 
-  <div class="dashboard-container">
-    <!-- Seção de Comparativos -->
-    <section class="chart-section" id="comparativos">
-      <div class="section-header">
-        <h2 class="section-title">Comparativo entre Meses</h2>
-      </div>
-      <div class="iframe-container">
-        <iframe class="responsive-iframe"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=578964487&amp;format=interactive"
-          loading="lazy"></iframe>
-      </div>
-      <div class="section-controls">
-        <button class="control-btn" onclick="openModal(this)">
-          <i class="fas fa-expand"></i> Expandir
-        </button>
-      </div>
-    </section>
-
-    <!-- Seção de Margens -->
-    <section class="chart-section" id="margens">
-      <div class="section-header">
-        <h2 class="section-title">Margens e Percentuais</h2>
-      </div>
-      <div class="iframe-container">
-        <iframe class="responsive-iframe"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=578964487&amp;format=interactive"
-          loading="lazy"></iframe>
-      </div>
-      <div class="section-controls">
-        <button class="control-btn" onclick="openModal(this)">
-          <i class="fas fa-expand"></i> Expandir
-        </button>
-      </div>
-    </section>
-
-    <!-- Seção de Totais -->
-    <section class="chart-section">
-      <div class="section-header">
-        <h2 class="section-title">Totais em Margem</h2>
-      </div>
-      <div class="iframe-container">
-        <iframe class="responsive-iframe"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=469572905&amp;format=interactive"
-          loading="lazy"></iframe>
-      </div>
-      <div class="section-controls">
-        <button class="control-btn" onclick="openModal(this)">
-          <i class="fas fa-expand"></i> Expandir
-        </button>
-      </div>
-    </section>
-
-    <!-- Seção de Percentuais -->
-    <section class="chart-section">
-      <div class="section-header">
-        <h2 class="section-title">Margem Percentual</h2>
-      </div>
-      <div class="iframe-container">
-        <iframe class="responsive-iframe"
-          src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSTFtzGJoM_SkG8ZobHrFdil3nZyZI9zKrPi6-5wDV27-wfly_oAgAcCSq1ylGg55giINmCpCMrMvQC/pubchart?oid=1090352349&amp;format=interactive"
-          loading="lazy"></iframe>
-      </div>
-      <div class="section-controls">
-        <button class="control-btn" onclick="openModal(this)">
-          <i class="fas fa-expand"></i> Expandir
-        </button>
-      </div>
-    </section>
-
-    
-    </section>
-
-
-
+  <div id="loading" class="loading-overlay">
+    <div class="spinner"></div>
+    <p>Carregando dados...</p>
   </div>
+  
+  <main class="container">
+    <section class="config">
+     
+      <input id="date-range" type="text" placeholder="Selecione intervalo de datas" disabled />
+    </section>
 
-  <!-- Modal -->
-  <div class="modal" id="chartModal">
-    <div class="modal-content">
-      <span class="close-modal" onclick="closeModal()">×</span>
-      <iframe id="modalIframe" class="responsive-iframe"></iframe>
-    </div>
-  </div>
+    <section id="charts-section">
+        <div class="chart-section">
+          <h3>Comparativo </h3>
+          <div class="chart-group">
+            <div class="chart-card"><canvas id="chart-4p"></canvas><p>SHOPEE: Líq x Bruto</p></div>
+            <div class="chart-card"><canvas id="chart-fast"></canvas><p>ML: Líq x Bruto</p></div>
+            <div class="chart-card"><canvas id="chart-armazem"></canvas><p>AMAZON: Líq x Bruto</p></div>
+            <div class="chart-card"><canvas id="chart-global" ></canvas><p>Global Líq x Bruto</p></div>
 
-  <script src="script.js">  </script>
+          </div>
+        </div>
+      <br>
+      <br>
+        <div class="chart-section">
+          <h3>Comparação Entre Lojas</h3>
+          <div class="comparison-group">
+            <div class="chart-card"><canvas id="chart-net-compare"></canvas><p>Comparação Líquido</p></div>
+            <div class="chart-card"><canvas id="chart-gross-compare"></canvas><p>Comparação Bruto</p></div>
+            
+          </div>
+        </div>
+      <br>
+      <br>
+        <div class="chart-section">
+          <h3>Participação Percentual</h3>
+          <div class="chart-group">
+            <div class="chart-card"><canvas id="chart-net-share"></canvas><p>Participação % Líquido</p></div>
+            <div class="chart-card"><canvas id="chart-gross-share"></canvas><p>Participação % Bruto</p></div>
+          </div>
+        </div>
+
+
+
+        <div class="chart-section">
+          <h2>Custo vs Lucro Bruto</h2>
+          <canvas id="chart-custo-bruto"></canvas>
+        </div>
+
+
+      </section>
+
+
+          <!-- Nova seção: Evolução da Margem Líquida -->
+    <div class="chart-section">
+        <h3>Evolução da Margem Líquida (%)</h3>
+        <div class="chart-group">
+          <div class="chart-card">
+            <canvas id="chart-margin-evolution"></canvas>
+            <p>Margem Líquida ao Longo do Tempo</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Nova seção: Pizza de Participação Acumulada -->
+      <div class="chart-section">
+        <h3>Participação Acumulada</h3>
+        <div class="chart-group">
+          <div class="chart-card">
+            <canvas id="chart-pie-net"></canvas>
+            <p>Total Líquido (%)</p>
+          </div>
+          <div class="chart-card">
+            <canvas id="chart-pie-gross"></canvas>
+            <p>Total Bruto (%)</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Nova seção: Comparativo Bruto x Líquido -->
+      <div class="chart-section">
+        <h3>Bruto vs. Líquido (Total no Período)</h3>
+        <div class="chart-group">
+          <div class="chart-card">
+            <canvas id="chart-bruto-vs-liquido"></canvas>
+            <p>Bruto x Líquido por Loja</p>
+          </div>
+        </div>
+      </div>
+  
+      <!-- Nova seção: Margem Líquida Média -->
+      <div class="chart-section">
+        <h3>Margem Líquida Média (%)</h3>
+        <div class="chart-group">
+          <div class="chart-card">
+            <canvas id="chart-margin-average"></canvas>
+            <p>Margem Média por Loja</p>
+          </div>
+        </div>
+      </div>
+  
+  </main>
 
 
 </body>
-
 </html>

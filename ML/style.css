@@ -1,178 +1,381 @@
-/* Reset básico */
+:root {
+  /* Cores */
+  --primary: #ffe600;
+  --primary-hover: #f3da00;
+  --secondary: #3483fa;
+  --secondary-hover: #2a6ed1;
+  --background: #f5f5f5;
+  --text: #2d2d2d;
+  --text-light: #666;
+  --border: #e0e0e0;
+  --error: #d32f2f;
+  --success: #2e7d32;
+
+  /* Espaçamentos */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Bordas */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* Transições */
+  --transition-fast: 0.15s ease;
+  --transition-medium: 0.3s ease;
+}
+
+/* Reset básico e tipografia */
 * {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  font-family: Arial, sans-serif;
-  background-color: #ffffff; /* Fundo branco */
-  padding-top: 70px; /* Espaço para o header fixo */
-  padding-bottom: 50px; /* Espaço para o footer fixo */
-  color: #333; /* Cor de texto principal */
-}
-
-/* Header fixo com paleta */
-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  background-color: #333; /* Cinza escuro */
-  color: #fff; /* Cor do texto no header */
-  padding: 15px 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
-/* Botão Home no header */
-header a.home-button {
-  position: absolute;
-  left: 20px;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-header a.home-button img {
-  width: 25px;
-  height: auto;
-}
-
-/* Container principal centralizado */
-main {
-  max-width: 600px;
+  font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  line-height: 1.6;
+  background-color: var(--background);
+  color: var(--text);
+  padding: var(--spacing-lg);
+  max-width: 800px;
   margin: 0 auto;
-  padding: 20px;
 }
 
-/* Estilo da calculadora */
+h1, h2 {
+  color: var(--secondary);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+/* Componente Calculator */
 .calculator {
-  background: #fff;
-  padding: 20px;
-  margin: 20px 0;
-  border: 1px solid #ddd; /* Cor da borda */
-  border-radius: 5px;
-  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+  background: white;
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+  margin-bottom: var(--spacing-xl);
 }
 
-.calculator h3 {
-  margin-bottom: 10px;
-  color: #FF8C00; /* Cor laranja dos títulos */
+.field-group {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.field {
+  margin-bottom: var(--spacing-md);
 }
 
 label {
   display: block;
-  margin: 10px 0 5px;
-  text-align: left;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--text);
+  font-size: 0.9rem;
 }
 
 input,
-select,
-button {
+select {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 10px;
-  border: 1px solid #ddd; /* Cor da borda */
-  border-radius: 4px;
-  font-size: 16px;
+  padding: var(--spacing-sm);
+  border: 2px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  transition: border-color var(--transition-medium),
+              box-shadow var(--transition-fast);
 }
 
+input:focus,
+select:focus {
+  border-color: var(--secondary);
+  box-shadow: 0 0 0 3px rgba(52, 131, 250, 0.15);
+  outline: none;
+}
+
+/* Botões */
 button {
-  background-color: #007BFF; /* Azul do botão */
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-xs);
+  background: var(--primary);
+  color: var(--text);
   border: none;
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-md);
+  font-weight: 600;
   cursor: pointer;
+  transition: all var(--transition-medium);
+  width: 100%;
 }
 
 button:hover {
-  background-color: #0056b3; /* Azul mais escuro no hover */
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-#resultadoBase,
-#resultadoFinal {
-  font-size: 18px;
-  font-weight: bold;
-  margin-top: 20px;
-  white-space: pre-line;
-}
-
-/* Área de frete */
-#areaFrete {
-  display: none;
-  border-top: 1px solid #ccc;
-  padding-top: 15px;
-  margin-top: 15px;
-}
-
-/* Footer fixo */
-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: #333; /* Cinza escuro do footer */
-  color: #fff; /* Cor do texto no footer */
-  text-align: center;
-  padding: 10px;
-  font-size: 14px;
-  z-index: 1000;
-}
-
-/* Container do botão modal */
-.modal-button-container {
-  display: flex;
-  justify-content: center;
-  margin-top: 15px; /* Espaço abaixo do header */
-}
-
-.modal-button {
-  background-color: #007BFF; /* Azul do botão */
+button.secondary {
+  background: var(--secondary);
   color: white;
-  padding: 8px 16px; /* Diminuindo o tamanho do botão */
-  font-size: 14px; /* Reduzindo a fonte */
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: auto; /* Para não ocupar toda a largura */
-  min-width: 120px; /* Mantendo um tamanho mínimo */
-  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2); /* Sombra leve */
 }
 
-.modal-button:hover {
-  background-color: #0056b3; /* Azul mais escuro no hover */
-  transform: scale(1.05); /* Pequeno efeito de aumento */
+button.secondary:hover {
+  background: var(--secondary-hover);
 }
 
-/* Estilização do modal */
+/* Resultados */
+.results {
+  background: rgba(248, 249, 250, 0.5);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-md);
+  margin-top: var(--spacing-lg);
+  backdrop-filter: blur(4px);
+}
+
+.result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-sm) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.result-value {
+  font-weight: 700;
+  color: var(--secondary);
+  font-size: 1.1rem;
+}
+
+/* Feedback e estados */
+.warning {
+  color: var(--error);
+  background: rgba(255, 235, 238, 0.9);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-sm);
+  margin-top: var(--spacing-md);
+  animation: fadeIn 0.3s ease;
+}
+
+.success {
+  color: var(--success);
+  background: rgba(236, 247, 237, 0.9);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Tabelas */
+.data-table {
+  width: 100%;
+  margin: var(--spacing-md) 0;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.data-table th,
+.data-table td {
+  padding: var(--spacing-sm);
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+.data-table th {
+  background: var(--primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+}
+
+/* Modal */
 .modal {
   display: none;
   position: fixed;
-  z-index: 1;
-  left: 0;
   top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8); /* Cor de fundo semitransparente */
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(3px);
+  z-index: 1000;
+  animation: fadeIn 0.3s ease;
 }
 
 .modal-content {
-  background-color: #fff; /* Cor de fundo do modal */
-  margin: 10% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 50%;
-  text-align: center;
-  border-radius: 5px;
+  background: white;
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-lg);
+  width: min(90%, 500px);
+  position: relative;
+  transform-origin: center;
+  animation: scaleUp 0.3s ease;
 }
 
-.close {
-  color: #333; /* Cor do texto do fechamento da modal */
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
+@keyframes scaleUp {
+  from { transform: scale(0.95); }
+  to { transform: scale(1); }
+}
+
+/* Responsividade */
+@media (max-width: 640px) {
+  body {
+    padding: var(--spacing-md);
+  }
+
+  .calculator {
+    padding: var(--spacing-md);
+  }
+
+  .field-group {
+    grid-template-columns: 1fr;
+  }
+
+  button {
+    padding: var(--spacing-sm);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+
+/* Botão Fechar Modal */
+.close-modal {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  font-size: 32px;
   cursor: pointer;
+  color: var(--text);
+  transition: all var(--transition-medium);
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  line-height: 1;
+}
+
+.close-modal:hover {
+  color: var(--secondary);
+  transform: rotate(90deg) scale(1.1);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.close-modal:active {
+  transform: rotate(90deg) scale(0.9);
+}
+
+/* Tabelas de Promoção */
+.tabela-promo {
+  width: 100%;
+  margin: var(--spacing-lg) 0;
+  border-collapse: collapse;
+  background: white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.tabela-promo thead {
+  background: var(--secondary);
+  color: white;
+}
+
+.tabela-promo th {
+  padding: var(--spacing-md);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  letter-spacing: 0.5px;
+}
+
+.tabela-promo td {
+  padding: var(--spacing-md);
+  border-bottom: 1px solid var(--border);
+  text-align: center;
+  transition: background-color var(--transition-fast);
+}
+
+.tabela-promo tr:last-child td {
+  border-bottom: none;
+}
+
+.tabela-promo tr:hover td {
+  background-color: rgba(52, 131, 250, 0.03);
+}
+
+.tabela-promo .linha-negativa {
+  background-color: #fff0f0;
+  color: var(--error);
+  font-weight: 500;
+}
+
+.tabela-promo .linha-positiva:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+/* Status Indicator */
+.status-indicator {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: var(--spacing-xs);
+}
+
+.status-positive {
+  background-color: var(--success);
+}
+
+.status-negative {
+  background-color: var(--error);
+}
+
+/* Alinhamento de valores */
+.valor-promo {
+  font-family: 'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 480px) {
+  .tabela-promo {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+  
+  .close-modal {
+    top: 12px;
+    right: 12px;
+    font-size: 28px;
+    width: 36px;
+    height: 36px;
+  }
 }
